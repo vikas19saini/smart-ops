@@ -3,6 +3,7 @@ import { TenantModule } from './modules/tenant/tenant.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@modules/auth/auth.module';
+import { AuthGuard } from '@common/auth.guard';
 
 @Module({
   imports: [
@@ -11,6 +12,11 @@ import { AuthModule } from '@modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
