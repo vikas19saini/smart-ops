@@ -20,7 +20,9 @@
     "paths": {
       "@migrations/*" : ["migrations/*"],
       "@modules/*" :["src/modules/*"],
-      "@common/*" :["src/common/*"]
+      "@common/*" :["src/common/*"],
+      "@interfaces/*":["src/interfaces"],
+      "@app/*": ["src/app"]
     }
   }
 }
