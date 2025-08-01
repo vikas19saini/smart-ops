@@ -18,11 +18,12 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@migrations/*" : ["migrations/*"],
+      "@tenancy/*": ["src/tenancy/*"],
+      "@database/*": ["src/database/*"],
+      "@migrations/*" : ["src/database/*"],
       "@modules/*" :["src/modules/*"],
       "@common/*" :["src/common/*"],
-      "@interfaces/*":["src/interfaces"],
-      "@app/*": ["src/app"]
+      "@interfaces/*":["src/interfaces"]
     }
   }
 }

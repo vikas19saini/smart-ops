@@ -1,15 +1,9 @@
 import { BaseEntity } from '@common/base.entity';
-import { TenantEntity } from '@modules/tenant/tenant.entity';
+
 import { Exclude } from 'class-transformer';
 import { UserRole } from 'src/interfaces/role.type';
 import { UserStatus } from 'src/interfaces/user.type';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -37,11 +31,4 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   status: UserStatus;
-
-  @Column({ name: 'tenant_id' })
-  tenantId: Number;
-
-  @ManyToOne(() => TenantEntity)
-  @JoinColumn({ name: 'tenant_id' })
-  tenant: TenantEntity;
 }

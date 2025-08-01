@@ -10,20 +10,8 @@ export class TenantEntity extends BaseEntity {
   name: string;
 
   @Column()
-  address: string;
+  domain: string;
 
   @Column()
-  city: string;
-
-  @Column()
-  state: string;
-
-  @Column()
-  country: string;
-
-  @Column()
-  gstin: string;
-
-  @Column()
-  status: Number;
+  status: string;
 }

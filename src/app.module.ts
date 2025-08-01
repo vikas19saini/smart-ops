@@ -1,22 +1,29 @@
-import { Module } from '@nestjs/common';
-import { TenantModule } from './modules/tenant/tenant.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@modules/auth/auth.module';
 import { AuthGuard } from '@common/auth.guard';
+import { TenantMiddleware } from './tenancy/tenant.middleware';
+import { DatabaseModule } from './database/database.module';
+import { DatabaseService } from '@database/database.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-    TenantModule,
+    DatabaseModule,
     AuthModule,
   ],
   controllers: [],
   providers: [
+    DatabaseService,
     {
       provide: 'APP_GUARD',
       useClass: AuthGuard,
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenantMiddleware).forRoutes('*');
+  }
+}

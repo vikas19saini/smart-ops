@@ -5,26 +5,23 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { JwtService } from '@nestjs/jwt';
 
 import { SignupDto } from './signup.dto';
 import { SignInDto } from './signin.dto';
-import { TenantEntity } from '@modules/tenant/tenant.entity';
+
 import { UserEntity } from '@modules/users/user.entity';
 import { UserStatus } from 'src/interfaces/user.type';
 import { PasswordService } from '@common/password.service';
+import { DatabaseService } from '@database/database.service';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    @InjectRepository(TenantEntity)
-    private readonly tenantRepository: Repository<TenantEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly databaseService: DatabaseService,
     private readonly passwordService: PasswordService,
     private readonly jwtService: JwtService,
   ) {}
@@ -35,7 +32,9 @@ export class AuthService {
   async create(signupData: SignupDto): Promise<void> {
     const { user, company } = signupData;
 
-    const existingUser = await this.userRepository.findOne({
+    const userRepository = this.databaseService.getRepository(UserEntity);
+
+    const existingUser = await userRepository.findOne({
       where: [{ email: user.email }, { phone: user.phone }],
     });
 
@@ -49,13 +48,10 @@ export class AuthService {
     }
 
     try {
-      const savedCompany = await this.tenantRepository.save(company);
-
-      user.tenantId = savedCompany.id;
       user.status = UserStatus.ACTIVE;
       user.password = await this.passwordService.hashPassword(user.password);
 
-      await this.userRepository.save(user);
+      await userRepository.save(user);
 
       this.logger.log(`User registered: ${user.email}`);
     } catch (err) {
@@ -70,7 +66,9 @@ export class AuthService {
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signInDto;
 
-    const user = await this.userRepository.findOneBy({ email });
+    const userRepository = this.databaseService.getRepository(UserEntity);
+
+    const user = await userRepository.findOneBy({ email });
 
     if (!user) {
       this.logger.warn(`Login failed: User not found for email ${email}`);
@@ -91,7 +89,6 @@ export class AuthService {
       userId: user.id,
       email: user.email,
       type: user.type,
-      tenantId: user.tenantId,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
