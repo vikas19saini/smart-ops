@@ -7,6 +7,11 @@ export abstract class BaseEntity {
   @UpdateDateColumn({ name: 'updated', type: 'timestamp' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted', type: 'timestamp', select: false })
+  @DeleteDateColumn({
+    name: 'deleted',
+    type: 'timestamp',
+    select: false,
+    nullable: true,
+  })
   deletedAt: Date;
 }

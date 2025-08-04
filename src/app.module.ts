@@ -5,7 +5,6 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { AuthGuard } from '@common/auth.guard';
 import { TenantMiddleware } from './tenancy/tenant.middleware';
 import { DatabaseModule } from './database/database.module';
-import { DatabaseService } from '@database/database.service';
 
 @Module({
   imports: [
@@ -15,7 +14,6 @@ import { DatabaseService } from '@database/database.service';
   ],
   controllers: [],
   providers: [
-    DatabaseService,
     {
       provide: 'APP_GUARD',
       useClass: AuthGuard,

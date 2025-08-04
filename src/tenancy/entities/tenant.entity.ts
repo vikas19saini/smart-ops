@@ -13,5 +13,5 @@ export class TenantEntity extends BaseEntity {
   domain: string;
 
   @Column()
-  status: string;
+  status: Number;
 }

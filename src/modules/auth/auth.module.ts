@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '@modules/users/user.entity';
 import { PasswordService } from '@common/password.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -18,10 +16,9 @@ import { DatabaseService } from '@database/database.service';
       }),
       inject: [ConfigService],
     }),
-    DatabaseService,
   ],
   controllers: [AuthController],
-  providers: [AuthService, PasswordService],
+  providers: [AuthService, PasswordService, DatabaseService],
   exports: [JwtModule],
 })
 export class AuthModule {}
