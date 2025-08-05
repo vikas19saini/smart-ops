@@ -23,7 +23,7 @@
       "@migrations/*" : ["src/database/*"],
       "@modules/*" :["src/modules/*"],
       "@common/*" :["src/common/*"],
-      "@interfaces/*":["src/interfaces"]
+      "@interfaces/*":["src/interfaces/*"]
     }
   }
 }

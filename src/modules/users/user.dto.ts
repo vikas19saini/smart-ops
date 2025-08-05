@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
-import { UserRole } from 'src/interfaces/role.type';
-import { UserStatus } from 'src/interfaces/user.type';
+import { UserRole } from '@interfaces/role.type';
+import { UserStatus } from '@interfaces/user.type';
 
 export class UserDto {
   @IsEmail()

@@ -1,20 +1,15 @@
+// src/database/database.service.ts
+
 import {
   Injectable,
   Logger,
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import {
-  DataSource,
-  DataSourceOptions,
-  ObjectLiteral,
-  Repository,
-} from 'typeorm';
-
-import { ConfigService } from '@nestjs/config';
+import { DataSource, ObjectLiteral, Repository } from 'typeorm';
 import { TenantEntity } from '@tenancy/entities/tenant.entity';
 import { TenantContext } from '@tenancy/tenant.context';
-import { join } from 'path';
+import { DatasourceFactoryService } from './datasource.service';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -22,13 +17,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private tenantConnections = new Map<string, DataSource>();
   private defaultDataSource: DataSource;
 
-  constructor(private readonly dbConfig: ConfigService) {}
+  constructor(private readonly datasourceFactory: DatasourceFactoryService) {}
 
   async onModuleInit() {
     await this.initializeDefaultConnection();
     await this.initializeTenantConnections();
-    await this.defaultDataSource.destroy();
-    this.logger.log('Default connection closed after tenant loading');
   }
 
   async onModuleDestroy() {
@@ -36,24 +29,14 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       await dataSource.destroy();
       this.logger.log(`Closed connection for tenant: ${tenantId}`);
     }
+    if (this.defaultDataSource) {
+      await this.defaultDataSource.destroy();
+      this.logger.log(`Closed default (master) connection`);
+    }
   }
 
   private async initializeDefaultConnection() {
-    const options: DataSourceOptions = {
-      type: 'mysql',
-      username: this.dbConfig.getOrThrow('DB_USER_NAME'),
-      password: this.dbConfig.getOrThrow('DB_PASSWORD'),
-      port: this.dbConfig.getOrThrow<number>('DB_PORT_NUMBER'),
-      database: this.dbConfig.getOrThrow('DB_NAME'),
-      logging: this.dbConfig.getOrThrow<boolean>('DB_LOGGING'),
-      host: this.dbConfig.getOrThrow('DB_HOST_NAME'),
-      entities: [__dirname + '/../tenancy/**/*.entity{.ts,.js}'],
-      migrations: [],
-      synchronize: false,
-    };
-
-    this.defaultDataSource = new DataSource(options);
-    await this.defaultDataSource.initialize();
+    this.defaultDataSource = await this.datasourceFactory.create({});
     this.logger.log('Default (master) connection initialized');
   }
 
@@ -67,24 +50,20 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async createTenantConnection(tenantId: string) {
-    const options: DataSourceOptions = {
-      type: 'mysql',
-      username: this.dbConfig.getOrThrow('DB_USER_NAME'),
-      password: this.dbConfig.getOrThrow('DB_PASSWORD'),
-      port: this.dbConfig.getOrThrow<number>('DB_PORT_NUMBER'),
-      logging: this.dbConfig.getOrThrow<boolean>('DB_LOGGING'),
-      host: this.dbConfig.getOrThrow('DB_HOST_NAME'),
-      database: `${this.dbConfig.getOrThrow('TENANT_DB_PREFIX')}${tenantId}`,
-      entities: [join(__dirname, '..', 'modules', '**', '*.entity.{ts,js}')],
-      migrations: [],
-      synchronize: false,
-    };
-
-    const tenantDataSource = new DataSource(options);
-    await tenantDataSource.initialize();
-
-    this.tenantConnections.set(tenantId, tenantDataSource);
+    const dataSource = await this.datasourceFactory.create({ tenantId });
+    this.tenantConnections.set(tenantId, dataSource);
     this.logger.log(`Tenant connection established: tenantId=${tenantId}`);
+  }
+
+  async createTenantConnectionWithMigration(tenantId: string): Promise<void> {
+    const dataSource = await this.datasourceFactory.create({
+      tenantId,
+    });
+    await dataSource.runMigrations();
+    this.tenantConnections.set(tenantId, dataSource);
+    this.logger.log(
+      `Migrations run and connection established: tenantId=${tenantId}`,
+    );
   }
 
   public getDataSource(): DataSource {

@@ -5,12 +5,14 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { AuthGuard } from '@common/auth.guard';
 import { TenantMiddleware } from './tenancy/tenant.middleware';
 import { DatabaseModule } from './database/database.module';
+import { TenantModule } from '@tenancy/tenant.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     DatabaseModule,
     AuthModule,
+    TenantModule,
   ],
   controllers: [],
   providers: [

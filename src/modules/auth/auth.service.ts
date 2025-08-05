@@ -30,7 +30,7 @@ export class AuthService {
    * Register a new user and tenant
    */
   async create(signupData: SignupDto): Promise<void> {
-    const { user, company } = signupData;
+    const { user } = signupData;
 
     const userRepository = this.databaseService.getRepository(UserEntity);
 
