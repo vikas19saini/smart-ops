@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable,
   Logger,
   OnModuleDestroy,
@@ -99,7 +98,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
     const connection = this.tenantConnections.get(tenantId);
     if (!connection) {
-      throw new Error(`No tenant connection found for tenantId: ${tenantId}`);
+      throw new Error(`Invalid tenantId: ${tenantId}`);
     }
 
     return connection;
