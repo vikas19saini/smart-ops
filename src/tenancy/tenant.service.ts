@@ -1,6 +1,6 @@
 import { TenantDto } from '@common/tenant.dto';
 import { DatabaseService } from '@database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TenantEntity } from './entities/tenant.entity';
 import { DatasourceFactoryService } from '@database/datasource.service';
 
@@ -21,6 +21,7 @@ export class TenantService {
     });
 
     await dataSource.runMigrations();
+    await dataSource.destroy();
 
     return tenantDetails;
   }
