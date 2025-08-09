@@ -1,7 +1,7 @@
 import { TenantDto } from '@common/tenant.dto';
 import { DatabaseService } from '@database/database.service';
 import { Injectable } from '@nestjs/common';
-import { TenantEntity } from './entities/tenant.entity';
+import { TenantEntity } from './tenant.entity';
 import { DatasourceFactoryService } from '@database/datasource.service';
 
 @Injectable()

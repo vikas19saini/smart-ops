@@ -1,5 +1,5 @@
-import { TenantDto } from '@common/tenant.dto';
 import { UserDto } from '@modules/users/user.dto';
+import { TenantDto } from '@tenancy/tenant.dto';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 

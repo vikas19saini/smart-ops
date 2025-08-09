@@ -6,6 +6,7 @@ import { AuthGuard } from '@common/auth.guard';
 import { TenantMiddleware } from './tenancy/tenant.middleware';
 import { DatabaseModule } from './database/database.module';
 import { TenantModule } from '@tenancy/tenant.module';
+import { UserModule } from '@modules/users/user.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { TenantModule } from '@tenancy/tenant.module';
     DatabaseModule,
     AuthModule,
     TenantModule,
+    UserModule,
   ],
   controllers: [],
   providers: [

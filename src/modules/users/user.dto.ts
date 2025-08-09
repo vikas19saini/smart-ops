@@ -23,7 +23,4 @@ export class UserDto {
   @IsOptional()
   @IsEnum(UserStatus)
   status: UserStatus;
-
-  @IsOptional()
-  tenantId: Number;
 }

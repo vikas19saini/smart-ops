@@ -7,7 +7,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { DataSource, ObjectLiteral, Repository } from 'typeorm';
-import { TenantEntity } from '@tenancy/entities/tenant.entity';
+import { TenantEntity } from '@tenancy/tenant.entity';
 import { TenantContext } from '@tenancy/tenant.context';
 import { DatasourceFactoryService } from './datasource.service';
 
