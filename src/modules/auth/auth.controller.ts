@@ -3,8 +3,9 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './signin.dto';
 import { Public } from '@common/auth.decorator';
 import { UserService } from '@modules/users/user.service';
-import { UserDto, UserResponseDto } from '@modules/users/user.dto';
+import { UserDto } from '@modules/users/user.dto';
 import { plainToInstance } from 'class-transformer';
+import { UserEntity } from '@modules/users/user.entity';
 
 @Public()
 @Controller('auth')
@@ -16,17 +17,12 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(@Body() user: UserDto) {
-    return plainToInstance(
-      UserResponseDto,
-      await this.userService.create(user),
-      {
-        excludeExtraneousValues: true,
-      },
-    );
+    return plainToInstance(UserEntity, await this.userService.create(user), {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Post('/signin')
-  @HttpCode(200)
   async signIn(@Body() signInDto: SignInDto) {
     return await this.authService.signIn(signInDto);
   }

@@ -1,27 +1,37 @@
 import { DatabaseService } from '@database/database.service';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TenantEntity } from './tenant.entity';
 import { DatasourceFactoryService } from '@database/datasource.service';
 import { TenantDto } from './tenant.dto';
 
 @Injectable()
 export class TenantService {
+  private readonly logger = new Logger(TenantService.name);
   constructor(
     private readonly dbService: DatabaseService,
     private readonly datasourceFactory: DatasourceFactoryService,
   ) {}
 
+  private getTenentRepo() {
+    return this.dbService.getRepository(TenantEntity);
+  }
+
+  async searchByDomainName(domain: string) {
+    try {
+      const tenantRepo = this.dbService.getRepository(TenantEntity);
+      return await tenantRepo.findBy({ domain });
+    } catch (err) {
+      this.logger.error(`Tenant search by domain name ${domain}`, err);
+      throw err;
+    }
+  }
+
+  async isValidTenant(domain: string) {
+    return !this.getTenentRepo().exists({ where: { domain } });
+  }
+
   async create(tenantDto: TenantDto): Promise<TenantEntity> {
-    const tenantRepo = this.dbService.getRepository(TenantEntity);
-
-    const isTenantExist = await tenantRepo.exists({
-      where: { domain: tenantDto.domain },
-    });
-
-    if (isTenantExist)
-      throw new ConflictException(
-        `Tenant with ${tenantDto.domain} domain name already exist!`,
-      );
+    const tenantRepo = this.getTenentRepo();
 
     const tenantDetails = await tenantRepo.save(tenantDto);
 

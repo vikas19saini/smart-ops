@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -7,13 +6,13 @@ import {
 } from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
-
 import { SignInDto } from './signin.dto';
-
 import { UserEntity } from '@modules/users/user.entity';
-import { UserStatus } from 'src/interfaces/user.type';
+
 import { PasswordService } from '@common/password.service';
 import { DatabaseService } from '@database/database.service';
+import { TenantContext } from '@tenancy/tenant.context';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -26,14 +25,15 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
-    const { email, password } = signInDto;
+    const { username, password } = signInDto;
+    const tenantId = TenantContext.getTenantId();
 
     const userRepository = this.databaseService.getRepository(UserEntity);
 
-    const user = await userRepository.findOneBy({ email });
+    const user = await userRepository.findOneBy({ username });
 
     if (!user) {
-      this.logger.warn(`Login failed: User not found for email ${email}`);
+      this.logger.warn(`Login failed: User not found for username ${username}`);
       throw new NotFoundException('Incorrect email address');
     }
 
@@ -43,14 +43,17 @@ export class AuthService {
     );
 
     if (!isMatch) {
-      this.logger.warn(`Login failed: Invalid password for email ${email}`);
+      this.logger.warn(
+        `Login failed: Invalid password for username ${username}`,
+      );
       throw new UnauthorizedException('Incorrect password');
     }
 
     const payload = {
-      userId: user.id,
-      email: user.email,
-      type: user.type,
+      user: plainToInstance(UserEntity, user, {
+        excludeExtraneousValues: true,
+      }),
+      tenantId,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
