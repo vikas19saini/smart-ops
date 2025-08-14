@@ -6,6 +6,6 @@ import { DatasourceFactoryService } from './datasource.service';
 @Module({
   imports: [],
   providers: [DatabaseService, DatasourceFactoryService],
-  exports: [DatabaseService],
+  exports: [DatabaseService, DatasourceFactoryService],
 })
 export class DatabaseModule {}

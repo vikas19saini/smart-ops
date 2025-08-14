@@ -8,7 +8,6 @@ import {
 
 import { JwtService } from '@nestjs/jwt';
 
-import { SignupDto } from './signup.dto';
 import { SignInDto } from './signin.dto';
 
 import { UserEntity } from '@modules/users/user.entity';
@@ -26,43 +25,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  /**
-   * Register a new user and tenant
-   */
-  async create(signupData: SignupDto): Promise<void> {
-    const { user } = signupData;
-
-    const userRepository = this.databaseService.getRepository(UserEntity);
-
-    const existingUser = await userRepository.findOne({
-      where: [{ email: user.email }, { phone: user.phone }],
-    });
-
-    if (existingUser) {
-      this.logger.warn(
-        `User already exists with email: ${user.email} or phone: ${user.phone}`,
-      );
-      throw new ConflictException(
-        `Email (${user.email}) or phone number (${user.phone}) is already in use.`,
-      );
-    }
-
-    try {
-      user.status = UserStatus.ACTIVE;
-      user.password = await this.passwordService.hashPassword(user.password);
-
-      await userRepository.save(user);
-
-      this.logger.log(`User registered: ${user.email}`);
-    } catch (err) {
-      this.logger.error('Failed to create user', err.stack);
-      throw err;
-    }
-  }
-
-  /**
-   * Sign in a user and return JWT access token
-   */
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { email, password } = signInDto;
 

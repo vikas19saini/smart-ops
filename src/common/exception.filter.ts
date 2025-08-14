@@ -31,7 +31,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: status,
       message,
       error: message,
-      // stack: process.env.NODE_ENV !== 'production' ? stack : undefined,
     });
   }
 }

@@ -4,7 +4,7 @@ import { TenantContext } from './tenant.context';
 
 export class TenantMiddleware implements NestMiddleware {
   use(req: FastifyRequest, res: FastifyReply, next: (error?: any) => void) {
-    const tenantId = (req.headers['x-tenant-id'] as string) ?? 'master';
+    const tenantId = String(req.headers['x-tenant-id'] ?? 'master');
     TenantContext.run(tenantId, () => next());
   }
 }

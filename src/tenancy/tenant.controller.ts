@@ -1,7 +1,7 @@
 import { Public } from '@common/auth.decorator';
-import { TenantDto } from '@common/tenant.dto';
 import { Body, Controller, Post } from '@nestjs/common';
 import { TenantService } from './tenant.service';
+import { TenantDto } from './tenant.dto';
 
 @Public()
 @Controller('tenant')

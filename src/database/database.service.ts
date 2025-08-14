@@ -1,5 +1,3 @@
-// src/database/database.service.ts
-
 import {
   Injectable,
   Logger,
@@ -49,7 +47,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async createTenantConnection(tenantId: string) {
+  public async createTenantConnection(tenantId: string) {
     const dataSource = await this.datasourceFactory.create({ tenantId });
     this.tenantConnections.set(tenantId, dataSource);
     this.logger.log(`Tenant connection established: tenantId=${tenantId}`);
