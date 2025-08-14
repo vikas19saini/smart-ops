@@ -19,6 +19,10 @@ export class UserService {
     return this.dbService.getRepository(UserEntity);
   }
 
+  async findUserByUsername(username: string) {
+    return await this.getUserRepo().findOneBy({ username });
+  }
+
   async isUserExist(user: UserDto) {
     return await this.getUserRepo().exists({
       where: [

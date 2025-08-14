@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { PasswordService } from '@common/password.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { TenantService } from '@tenancy/tenant.service';
 import { UserService } from '@modules/users/user.service';
 
 @Module({
@@ -13,7 +12,7 @@ import { UserService } from '@modules/users/user.service';
       useFactory: async (configService: ConfigService) => ({
         global: true,
         secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '10m' },
       }),
       inject: [ConfigService],
     }),

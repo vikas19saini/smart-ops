@@ -11,6 +11,7 @@ export class Users1745581921541 implements MigrationInterface {
         \`last_name\` VARCHAR(225) DEFAULT NULL,
         \`password\` VARCHAR(225) DEFAULT NULL,
         \`phone\` VARCHAR(225) DEFAULT NULL,
+        \`refresh_token\` VARCHAR(225) DEFAULT NULL,
         \`type\` ENUM('user', 'admin') NOT NULL DEFAULT 'user' COMMENT 'User role type',
         \`status\` ENUM('active', 'inactive') NOT NULL DEFAULT 'active' COMMENT 'User account status',
         \`created\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
