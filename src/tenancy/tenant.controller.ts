@@ -20,7 +20,12 @@ export class TenantController {
   @Post('/')
   async create(@Body() tenant: TenantDto) {
     try {
-      if (!(await this.tenantService.isValidTenant(tenant.domain)))
+      const tenantDetails = await this.tenantService.getTenantBuyDomain(
+        tenant.domain,
+      );
+      console.log('tenantDetails: ', tenantDetails);
+
+      if (tenantDetails)
         throw new ConflictException(
           `Tenant with ${tenant.domain} domain name already exist!`,
         );

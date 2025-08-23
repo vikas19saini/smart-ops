@@ -26,8 +26,14 @@ export class TenantService {
     }
   }
 
-  async isValidTenant(domain: string) {
-    return !this.getTenentRepo().exists({ where: { domain } });
+  async getTenantBuyDomain(domain: string): Promise<TenantEntity | null> {
+    try {
+      const tenantRepo = this.getTenentRepo();
+      return await tenantRepo.findOneBy({ domain });
+    } catch (err) {
+      this.logger.error(`Error fetching tenant by domain ${domain}`, err);
+      throw err;
+    }
   }
 
   async create(tenantDto: TenantDto): Promise<TenantEntity> {
