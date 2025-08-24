@@ -5,12 +5,16 @@ import {
   Get,
   Logger,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
 import { ResponseMessages } from './user.response';
+import { Roles } from '@common/role.decorator';
+import { PaginationDto } from '@common/pagination.dto';
 
 @Controller('user')
+@Roles('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private readonly userService: UserService) {}
@@ -27,6 +31,12 @@ export class UserController {
     }
   }
 
-  @Get()
-  get() {}
+  @Get('/')
+  get(@Query() paginationDto: PaginationDto) {
+    try {
+      return this.userService.getUserList(paginationDto);
+    } catch (err) {
+      this.logger.error('Get all users error', err);
+    }
+  }
 }

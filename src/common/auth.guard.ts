@@ -5,7 +5,6 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
@@ -17,7 +16,6 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
     private readonly reflector: Reflector,
   ) {}
 
@@ -42,9 +40,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-      });
+      const payload = await this.jwtService.verifyAsync(token);
 
       // Attach decoded token to request for future use
       request.user = payload;

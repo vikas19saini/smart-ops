@@ -7,6 +7,8 @@ import { TenantMiddleware } from './tenancy/tenant.middleware';
 import { DatabaseModule } from './database/database.module';
 import { TenantModule } from '@tenancy/tenant.module';
 import { UserModule } from '@modules/users/user.module';
+import { RoleGuard } from '@common/role.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -19,8 +21,12 @@ import { UserModule } from '@modules/users/user.module';
   controllers: [],
   providers: [
     {
-      provide: 'APP_GUARD',
+      provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
     },
   ],
 })

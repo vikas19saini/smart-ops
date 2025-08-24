@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import { PasswordService } from '@common/password.service';
 
 import { UserStatus } from '@interfaces/user.type';
+import { PaginationDto } from '@common/pagination.dto';
 
 @Injectable()
 export class UserService {
@@ -43,5 +44,10 @@ export class UserService {
       this.logger.error('User createtion err: ', err?.message);
       throw err;
     }
+  }
+
+  async getUserList(paginationDto: PaginationDto) {
+    const userRepository = this.getUserRepo();
+    return await userRepository.findAndCount(paginationDto);
   }
 }

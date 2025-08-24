@@ -12,8 +12,6 @@ import { SignInDto } from './signin.dto';
 import { Public } from '@common/auth.decorator';
 import { UserService } from '@modules/users/user.service';
 import { UserDto } from '@modules/users/user.dto';
-import { plainToInstance } from 'class-transformer';
-import { UserEntity } from '@modules/users/user.entity';
 import { ResponseMessages } from '@modules/users/user.response';
 
 @Public()
@@ -32,9 +30,7 @@ export class AuthController {
       if (await this.userService.isUserExist(user)) {
         throw new ConflictException(ResponseMessages.USER_EXIST);
       }
-      return plainToInstance(UserEntity, await this.userService.create(user), {
-        excludeExtraneousValues: true,
-      });
+      return await this.userService.create(user);
     } catch (err) {
       this.logger.error('Signup error', err);
     }
@@ -53,9 +49,23 @@ export class AuthController {
         throw new UnauthorizedException('Incorrrect username or password.');
 
       const accessToken = await this.authService.getAccessToken(user);
-      return { accessToken };
+      const refreshToken = await this.authService.getAccessToken(user, true);
+      return { accessToken, refreshToken };
     } catch (err) {
       this.logger.error('Sign in error', err);
+    }
+  }
+
+  @Post('/refresh-token')
+  async signOut(@Body() requestData: { refreshToken: string }) {
+    try {
+      const accessToken = await this.authService.refreshAccessToken(
+        requestData.refreshToken,
+      );
+      return { accessToken };
+    } catch (err) {
+      this.logger.error('Refresh token error', err);
+      throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
 }
