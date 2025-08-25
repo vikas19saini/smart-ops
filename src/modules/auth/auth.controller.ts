@@ -45,14 +45,21 @@ export class AuthController {
       if (!user)
         throw new NotFoundException(`Username ${signInDto.username} not found`);
 
-      if (!this.authService.isPasswordMatch(signInDto.password, user.password))
+      if (
+        !(await this.authService.isPasswordMatch(
+          signInDto.password,
+          user.password,
+        ))
+      ) {
         throw new UnauthorizedException('Incorrrect username or password.');
+      }
 
       const accessToken = await this.authService.getAccessToken(user);
       const refreshToken = await this.authService.getAccessToken(user, true);
       return { accessToken, refreshToken };
     } catch (err) {
       this.logger.error('Sign in error', err);
+      throw err;
     }
   }
 

@@ -23,7 +23,6 @@ export class TenantController {
       const tenantDetails = await this.tenantService.getTenantBuyDomain(
         tenant.domain,
       );
-      console.log('tenantDetails: ', tenantDetails);
 
       if (tenantDetails)
         throw new ConflictException(
