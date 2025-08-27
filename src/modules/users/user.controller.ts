@@ -12,9 +12,10 @@ import { UserDto } from './user.dto';
 import { ResponseMessages } from './user.response';
 import { Roles } from '@common/role.decorator';
 import { PaginationDto } from '@common/pagination.dto';
+import { UserRole } from '@interfaces/role.type';
 
 @Controller('user')
-@Roles('user')
+@Roles(UserRole.ADMIN)
 export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private readonly userService: UserService) {}
