@@ -18,8 +18,7 @@ export class TenantService {
 
   async searchByDomainName(domain: string) {
     try {
-      const tenantRepo = this.dbService.getRepository(TenantEntity);
-      return await tenantRepo.findOneBy({ domain });
+      return await this.getTenentRepo().findOneBy({ domain });
     } catch (err) {
       this.logger.error(`Tenant search by domain name ${domain}`, err);
       throw err;

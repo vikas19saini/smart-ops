@@ -42,4 +42,9 @@ export class UserEntity extends BaseEntity {
   @Expose()
   @Column()
   status: UserStatus;
+
+  @Expose()
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }
