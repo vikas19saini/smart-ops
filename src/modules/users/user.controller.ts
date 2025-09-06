@@ -29,6 +29,7 @@ export class UserController {
       return await this.userService.create(user);
     } catch (err) {
       this.logger.error('Create user error', err);
+      throw err;
     }
   }
 
@@ -38,6 +39,7 @@ export class UserController {
       return this.userService.getUserList(paginationDto);
     } catch (err) {
       this.logger.error('Get all users error', err);
+      throw err;
     }
   }
 }
